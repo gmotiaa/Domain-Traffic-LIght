@@ -1,31 +1,25 @@
-import { useState, useEffect, useRef } from "react";
-
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Search, Zap, Shield, Globe, Cpu, Database, TrendingUp } from "lucide-react";
+import { ArrowRight, Search, Zap, Shield, Globe, Cpu, Sparkles, Network } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { writeAnalyzerPrefill } from "@/lib/analyzer-prefill";
-import {
-  behaviorSteps,
-  heroVideo,
-  homeManifest,
-  homeProof,
-} from "@/lib/site-content";
 import { routeHref } from "@/lib/site-router";
 
 import BorderGlow from "@/components/BorderGlow";
+import Dither from "@/components/Dither";
 
 /* ─── animation presets ─── */
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.1 },
-  transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] }, // Stronger ease-out
+  transition: { duration: 0.7, ease: "easeOut" },
 };
 
 const stagger = {
-  whileInView: { transition: { staggerChildren: 0.06 } }, // Faster stagger
+  whileInView: { transition: { staggerChildren: 0.1 } },
   viewport: { once: true },
 };
 
@@ -52,13 +46,13 @@ function GlassCard({
       viewport={{ once: true, amount: 0.1 }}
     >
       <BorderGlow
-        className={`w-full h-full rounded-[2.5rem] border-foreground/5 shadow-2xl flex flex-col backdrop-blur-3xl ${className}`}
+        className={`w-full h-full rounded-[2.5rem] border-white/5 shadow-2xl flex flex-col ${className}`}
         borderRadius={40}
         glowRadius={40}
         fillOpacity={0}
-        backgroundColor="hsl(var(--background))"
+        backgroundColor="#050505"
       >
-        <div style={glow ? { background: glow, height: '100%' } : { height: '100%' }}>
+        <div style={glow ? { background: glow, height: "100%" } : { height: "100%" }}>
           {children}
         </div>
       </BorderGlow>
@@ -74,36 +68,11 @@ type CacheStats = {
   verdicts?: Record<string, number>;
   storage?: string;
   dbSize?: number;
-  oldestRecord?: string | null;
-  newestRecord?: string | null;
 };
-
-import { StickersLayer, StickerData } from "@/components/StickersLayer";
-
-const homeStickers: StickerData[] = [
-  { src: "/sticker/1-61-256b.png", side: "left", top: "18%", rotation: -12 },
-  { src: "/sticker/1-67-256b.png", side: "right", top: "35%", rotation: 10 },
-  { src: "/sticker/1-86-256b.png", side: "left", top: "55%", rotation: 8 },
-  { src: "/sticker/1-71-256b.png", side: "right", top: "72%", rotation: -10 },
-  { src: "/sticker/1-54-256b.png", side: "left", top: "85%", rotation: 15 },
-];
-
-const verbs = ["Проверяй", "Анализируй", "Сканируй", "Изучай", "Оценивай"];
-const words = ["домен", "ссылку", "сервис", "URL", "сайт"];
-const placeholders = [
-  "Вставьте домен или ссылку...",
-  "Например: example.com",
-  "Проверьте подозрительный URL",
-  "https://suspicious-site.com",
-  "Введите адрес для анализа"
-];
 
 export function HomePage() {
   const [heroInput, setHeroInput] = useState("");
   const [stats, setStats] = useState<CacheStats | null>(null);
-  const [currentVerb, setCurrentVerb] = useState(0);
-  const [currentWord, setCurrentWord] = useState(0);
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -122,36 +91,9 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
+    const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const verbInterval = setInterval(() => {
-      setCurrentVerb((prev) => (prev + 1) % verbs.length);
-    }, 3000);
-
-    return () => clearInterval(verbInterval);
-  }, []);
-
-  useEffect(() => {
-    const wordInterval = setInterval(() => {
-      setCurrentWord((prev) => (prev + 1) % words.length);
-    }, 3000);
-
-    return () => clearInterval(wordInterval);
-  }, []);
-
-  useEffect(() => {
-    const placeholderInterval = setInterval(() => {
-      setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
-    }, 4000);
-
-    return () => clearInterval(placeholderInterval);
   }, []);
 
   function openAnalyzerWithInput(input: string) {
@@ -160,428 +102,197 @@ export function HomePage() {
   }
 
   return (
-    <div className="relative bg-background text-foreground selection:bg-foreground/20">
-      <StickersLayer items={homeStickers} />
-      {/* ══════════ HERO SECTION ══════════ */}
-      <section className="relative isolate min-h-[90svh] overflow-hidden">
-        {/* Background Video & Overlays */}
-        <video
-          autoPlay
-          className="absolute inset-0 z-0 h-full w-full object-cover scale-105"
-          loop
-          muted
-          playsInline
-          src={heroVideo}
+    <div className="relative bg-[#020202] text-foreground selection:bg-foreground/20 overflow-hidden font-sans">
+      {/* ══════════ DITHER BACKGROUND ══════════ */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <Dither
+          waveSpeed={0.03}
+          waveFrequency={3}
+          waveAmplitude={0.5}
+          waveColor={[0.1, 0.15, 0.3]} // Deep blue/violet hue
+          colorNum={6}
+          pixelSize={3}
+          enableMouseInteraction={true}
+          mouseRadius={1.5}
         />
-        <div className="absolute inset-0 z-[1] bg-black/40 dark:bg-background/70" />
-        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/60 via-black/20 to-background dark:to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020202]/50 via-transparent to-[#020202]" />
+      </div>
 
-        {/* Animated Mesh Orbs (Hero Only) */}
-        <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden">
-          <motion.div
-            animate={{ x: [0, 40, -30, 0], y: [0, -50, 30, 0] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-[10%] left-[10%] h-[700px] w-[700px] rounded-full bg-blue-500/10 opacity-40 blur-[150px]"
-            style={{ transform: `translateY(${scrollY * 0.3}px)` }}
-          />
-          <motion.div
-            animate={{ x: [0, -40, 30, 0], y: [0, 50, -30, 0] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-0 right-[5%] h-[600px] w-[600px] rounded-full bg-violet-500/10 opacity-30 blur-[120px]"
-            style={{ transform: `translateY(${scrollY * 0.2}px)` }}
-          />
-        </div>
+      {/* Background Accent Gradients (keeping some light behind things) */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <motion.div
+          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] left-1/2 -translate-x-1/2 h-[800px] w-[1200px] rounded-[100%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),transparent_70%)] blur-[120px]"
+          style={{ transform: `translateX(-50%) translateY(${scrollY * 0.4}px)` }}
+        />
+      </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[90svh] w-full max-w-7xl flex-col items-center justify-center px-4 pb-20 pt-32 text-center sm:px-6">
-          <motion.div
-            variants={stagger}
-            initial="initial"
-            whileInView="whileInView"
-            className="max-w-5xl"
-          >
-            <motion.p variants={fadeUp} className="text-xs font-medium uppercase tracking-[0.26em] text-foreground/50 sm:text-sm">
-              Мгновенный AI Анализатор Доменов
-            </motion.p>
-            
-            <motion.h1
-              variants={fadeUp}
-              className="mt-6 text-5xl font-semibold leading-[1.1] tracking-[-0.03em] sm:text-6xl md:text-7xl lg:text-[84px] drop-shadow-sm"
-            >
-              <span className="relative inline-block">
-                <motion.span
-                  key={currentVerb}
-                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="inline-block"
-                >
-                  {verbs[currentVerb]}
-                </motion.span>
-              </span>{" "}
-              <span className="relative inline-block">
-                <motion.span
-                  key={currentWord}
-                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="inline-block bg-gradient-to-r from-foreground via-foreground/90 to-foreground/40 bg-clip-text text-transparent"
-                >
-                  {words[currentWord]}
-                </motion.span>
-              </span>
-              <br />
-              <span className="bg-gradient-to-br from-foreground via-foreground/90 to-foreground/30 bg-clip-text text-transparent">
-                до ввода данных
-              </span>
-            </motion.h1>
-            
-            <motion.p variants={fadeUp} className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-foreground/60 sm:text-lg">
-              Проверяйте ссылки до ввода паролей. Сервис показывает уровень риска и объясняет, почему домен подозрительный.
-            </motion.p>
-
-            <motion.div variants={fadeUp} className="mx-auto mt-12 w-full max-w-3xl">
-              <div className="relative p-[1px] rounded-[2rem] bg-gradient-to-b from-foreground/20 to-foreground/0 shadow-[0_0_80px_rgba(0,0,0,0.05)] dark:shadow-[0_0_80px_rgba(255,255,255,0.05)] transition-shadow hover:shadow-[0_0_100px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_0_100px_rgba(255,255,255,0.08)]">
-                <form
-                  className="relative flex items-center gap-2 rounded-[2rem] bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 p-2 pr-2 overflow-hidden"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    openAnalyzerWithInput(heroInput);
-                  }}
-                >
-                  {/* Embedded animated glare */}
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-foreground/5 to-transparent w-[200%] animate-[shimmer_5s_infinite] -left-[100%]" />
-                  
-                  <div className="flex flex-1 items-center gap-4 px-5 relative z-10 w-full h-16">
-                    <Globe className="h-6 w-6 text-foreground/30" />
-                    <div className="relative w-full">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={currentPlaceholder}
-                          initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                          exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                          transition={{ duration: 0.4, ease: "easeInOut" }}
-                          className="pointer-events-none absolute inset-0 flex items-center text-xl text-foreground/30"
-                        >
-                          {!heroInput && placeholders[currentPlaceholder]}
-                        </motion.div>
-                      </AnimatePresence>
-                      <input
-                        id="hero-domain-input"
-                        aria-label="Введите домен или ссылку для проверки"
-                        className="w-full bg-transparent text-xl font-medium text-foreground outline-none relative z-10 transition-shadow focus:drop-shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:focus:drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"
-                        onChange={(event) => setHeroInput(event.target.value)}
-                        value={heroInput}
-                      />
-                    </div>
-                  </div>
-                  <Button className="h-14 w-full sm:w-auto shrink-0 rounded-[1.5rem] bg-foreground text-background px-8 text-base font-bold tracking-wide shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 hover:bg-foreground hover:scale-[1.05] active:scale-95 z-10" type="submit">
-                    Анализ
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </form>
-              </div>
-
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
-                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-start">
-                  {homeManifest.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-flex items-center gap-2 text-sm text-foreground/50"
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-foreground/40" />
-                      {item}
-                    </span>
-                  ))}
-                </div>
-
-                <Button asChild className="h-10 px-0 text-sm text-foreground/50 hover:text-foreground hover:bg-transparent" variant="ghost">
-                  <a href={routeHref("/method")}>Как работает проверка</a>
-                </Button>
-              </div>
-            </motion.div>
+      {/* ══════════ HERO SECTION ══════════ */}
+      <section className="relative isolate min-h-[95svh] flex flex-col items-center justify-center px-4 pt-32 pb-20">
+        <motion.div
+          variants={stagger}
+          initial="initial"
+          whileInView="whileInView"
+          className="w-full max-w-4xl text-center flex flex-col items-center relative z-10"
+        >
+          <motion.div variants={fadeUp} className="mb-6 flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 px-4 backdrop-blur-md">
+            <Sparkles className="h-4 w-4 text-violet-400" />
+            <span className="text-sm font-medium text-white/70">Новое измерение безопасности</span>
           </motion.div>
-        </div>
+
+          <motion.h1
+            variants={fadeUp}
+            className="text-5xl font-semibold leading-[1.1] tracking-[-0.03em] sm:text-6xl md:text-8xl bg-gradient-to-br from-white via-white/90 to-white/30 bg-clip-text text-transparent drop-shadow-sm"
+          >
+            Распознаёт угрозы <br/> до перехода.
+          </motion.h1>
+
+          <motion.p variants={fadeUp} className="mt-8 max-w-2xl text-lg text-white/50 font-light leading-relaxed">
+            Вставьте любую ссылку для мгновенного AI-анализа репутации, проверки фишинга и оценки риска.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="mt-12 w-full max-w-2xl">
+            <div className="relative p-[1px] rounded-[2rem] bg-gradient-to-b from-white/20 to-white/0 shadow-[0_0_80px_rgba(255,255,255,0.05)] transition-shadow hover:shadow-[0_0_100px_rgba(255,255,255,0.08)]">
+              <form
+                className="relative flex items-center gap-2 rounded-[2rem] bg-[#0A0A0A] p-2 pr-2 overflow-hidden"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  openAnalyzerWithInput(heroInput);
+                }}
+              >
+                {/* Embedded animated glare */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-white/5 to-transparent w-[200%] animate-[shimmer_5s_infinite] -left-[100%]" />
+
+                <div className="flex flex-1 items-center gap-4 px-5 relative z-10 w-full h-16">
+                  <Globe className="h-6 w-6 text-white/30" />
+                  <input
+                    id="domain-input"
+                    aria-label="Введите домен или ссылку для проверки"
+                    className="w-full bg-transparent text-xl font-medium text-white placeholder:text-white/20 outline-none"
+                    placeholder="example.com или полный URL..."
+                    value={heroInput}
+                    onChange={(e) => setHeroInput(e.target.value)}
+                  />
+                </div>
+                <Button className="h-14 shrink-0 rounded-[1.5rem] bg-white text-black px-8 text-base font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform" type="submit">
+                  Анализ
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </form>
+            </div>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* ══════════ AI FEATURES (NEW SECTION) ══════════ */}
-      <section className="relative w-full bg-background py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-          <div className="max-w-3xl">
-            <p className="text-xs uppercase tracking-[0.26em] text-foreground/40 font-medium">Подкапотная магия</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl bg-gradient-to-br from-foreground to-foreground/40 bg-clip-text text-transparent drop-shadow-sm">
-              Три проверки одновременно
+      {/* ══════════ BENTO BOX FEATURES ══════════ */}
+      <section className="relative w-full py-20 z-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-medium tracking-tight sm:text-5xl bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent">
+              Точная нейронная аналитика
             </h2>
+            <p className="mt-4 text-white/40">Под капотом работают три мощные системы проверки.</p>
           </div>
 
-          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            <GlassCard delay={0.1} className="overflow-hidden p-0 group" glow="radial-gradient(circle at 100% 100%, rgba(34,197,94,0.08), transparent 70%)">
-              <div className="p-10 z-10 relative">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 mb-6 group-hover:scale-110 transition-transform">
-                  <Shield className="h-6 w-6 text-green-400" strokeWidth={1.5} />
-                </div>
-                <h3 className="text-2xl font-semibold">Фиды фишинга</h3>
-                <p className="mt-3 text-base leading-relaxed text-foreground/50">
-                  Сверка с базами OpenPhish и URLAbuse. Если домен уже в списках фишинга, вы увидите это сразу.
-                </p>
-              </div>
-              <div className="px-8 pb-8 pt-0 mt-auto flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-                <img
-                  alt="Защита от фишинга"
-                  className="h-48 w-full object-contain mix-blend-screen"
-                  src="/shield-protection.svg?v=4"
-                />
-              </div>
-            </GlassCard>
-
-            <GlassCard delay={0.2} className="overflow-hidden p-0 group" glow="radial-gradient(circle at 100% 100%, rgba(59,130,246,0.08), transparent 70%)">
-              <div className="p-10 z-10 relative">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 mb-6 group-hover:scale-110 transition-transform">
-                  <Cpu className="h-6 w-6 text-blue-400" strokeWidth={1.5} />
-                </div>
-                <h3 className="text-2xl font-semibold">Локальный Ruleset</h3>
-                <p className="mt-3 text-base leading-relaxed text-foreground/50">
-                  Разбор структуры URL, проверка на опечатки брендов и подозрительные зоны. Работает мгновенно.
-                </p>
-              </div>
-              <div className="px-8 pb-8 pt-0 mt-auto flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-                <img
-                  alt="Сканирование базы данных"
-                  className="h-48 w-full object-contain mix-blend-screen"
-                  src="/database-scan.svg?v=4"
-                />
-              </div>
-            </GlassCard>
-
-            <GlassCard delay={0.3} containerClassName="md:col-span-2 lg:col-span-1" className="overflow-hidden p-0 group" glow="radial-gradient(circle at 100% 100%, rgba(139,92,246,0.08), transparent 70%)">
-              <div className="p-10 z-10 relative">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 mb-6 group-hover:scale-110 transition-transform">
-                  <Zap className="h-6 w-6 text-violet-400" strokeWidth={1.5} />
-                </div>
-                <h3 className="text-2xl font-semibold text-foreground">AI-слой</h3>
-                <p className="mt-3 text-base leading-relaxed text-violet-100/60 dark:text-violet-100/60 text-foreground/50">
-                  AI собирает результаты всех проверок и объясняет, что именно не так с доменом.
-                </p>
-              </div>
-              <div className="px-8 pb-8 pt-0 mt-auto flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-                <img
-                  alt="AI анализ"
-                  className="h-48 w-full object-contain mix-blend-screen"
-                  src="/ai-analysis.svg?v=4"
-                />
-              </div>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════ BEHAVIOR LOGIC ══════════ */}
-      <section className="relative w-full bg-[#030303] py-20 sm:py-28 overflow-hidden z-10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 relative z-10">
-          <GlassCard className="p-10 sm:p-14 md:p-16 backdrop-blur-3xl group" glow="radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), transparent 70%)">
-            <div className="max-w-3xl relative z-20">
-              <p className="text-xs uppercase tracking-[0.24em] text-white/40 font-medium">Логика сервиса</p>
-              <h2 className="mt-5 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl md:text-6xl bg-gradient-to-br from-white to-white/40 bg-clip-text text-transparent">
-                Три шага: остановка, проверка, решение
-              </h2>
-            </div>
-
-            <div className="mt-16 grid gap-6 lg:grid-cols-3 relative z-20">
-              {behaviorSteps.map((item, i) => (
-                <div key={item.step} className="flex flex-col transform transition-transform duration-500 hover:-translate-y-3">
-                  <BorderGlow
-                    className="rounded-[2.5rem] h-full w-full border-white/10 shadow-2xl p-0 overflow-hidden bg-white/[0.02] backdrop-blur-2xl"
-                    borderRadius={40}
-                    glowRadius={40}
-                    fillOpacity={0}
-                    backgroundColor="transparent"
-                  >
-                    <div className="relative flex flex-col justify-between h-full w-full group/card">
-                      {/* Big glowing background number */}
-                      <span className="absolute -top-6 -right-2 text-[10rem] font-bold leading-none text-white/[0.03] select-none pointer-events-none z-0 group-hover/card:text-white/[0.05] transition-colors duration-500">
-                        {i + 1}
-                      </span>
-                      
-                      <div className="flex-1 p-10 relative z-10">
-                        <div className="flex items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sm font-bold text-white border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover/card:scale-110 transition-transform">
-                            {i + 1}
-                          </span>
-                          <p className="text-[10px] uppercase tracking-[0.24em] text-white/40">{item.step}</p>
-                        </div>
-                        <h3 className="mt-8 text-2xl font-semibold text-white/90">{item.title}</h3>
-                        <p className="mt-4 text-sm leading-relaxed text-white/50 sm:text-base">
-                          {item.text}
-                        </p>
-                      </div>
-                      
-                      <div className="px-8 pb-8 mt-auto flex-shrink-0 opacity-80 group-hover/card:opacity-100 transition-opacity duration-300">
-                        {i === 0 && (
-                          <img
-                            alt="Пауза"
-                            className="h-48 w-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                            src="/pause-stop.svg?v=4"
-                          />
-                        )}
-                        {i === 1 && (
-                          <img
-                            alt="Процесс проверки"
-                            className="h-48 w-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                            src="/process-flow.svg?v=4"
-                          />
-                        )}
-                        {i === 2 && (
-                          <img
-                            alt="Действие"
-                            className="h-48 w-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                            src="/action-go.svg?v=4"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </BorderGlow>
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-        </div>
-      </section>
-
-      {/* ══════════ HOME PROOF ══════════ */}
-      <section className="relative w-full bg-background pb-16 sm:pb-24 pt-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-          <div className="mb-14">
-            <p className="text-xs uppercase tracking-[0.24em] text-foreground/40 font-medium">Что даёт сервис</p>
-            <h2 className="mt-5 max-w-2xl text-4xl font-semibold tracking-[-0.03em] sm:text-5xl bg-gradient-to-br from-foreground to-foreground/50 bg-clip-text text-transparent drop-shadow-sm">
-              Простой интерфейс, рабочий инструмент
-            </h2>
-          </div>
-          
-          <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
-            {homeProof.map((item, index) => {
-              const cardColors = [
-                'rgba(250,204,21,0.08)', // Yellow for speed
-                'rgba(59,130,246,0.08)', // Blue for verified
-                'rgba(168,85,247,0.08)'  // Purple for global network
-              ];
-              return (
-                <GlassCard key={item.title} delay={index * 0.1} className="overflow-hidden p-0 group" glow={`radial-gradient(circle at 50% 100%, ${cardColors[index]}, transparent 60%)`}>
-                  <div className="p-10 pb-2 z-10 relative">
-                    <h3 className="text-xl font-semibold text-foreground">{item.title}</h3>
-                    <p className="mt-3 text-base leading-relaxed text-foreground/50">
-                      {item.text}
-                    </p>
+          <div className="grid gap-6 md:grid-cols-3 md:grid-rows-2">
+            {/* Cell 1: Large Wide AI Analysis */}
+            <GlassCard delay={0.1} containerClassName="md:col-span-2 md:row-span-1" className="p-0 overflow-hidden group" glow="radial-gradient(circle at 80% 20%, rgba(139,92,246,0.1), transparent 60%)">
+              <div className="flex flex-col sm:flex-row h-full">
+                <div className="p-10 flex-1 flex flex-col justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white/5 border border-white/10 mb-6 group-hover:scale-110 transition-transform">
+                    <Zap className="h-6 w-6 text-violet-400" />
                   </div>
-                  <div className="px-8 pb-8 pt-4 mt-auto flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-                    {index === 0 && (
-                      <img alt="Быстрый старт" className="h-48 w-full object-contain mix-blend-screen" src="/speed-fast.svg?v=4" />
-                    )}
-                    {index === 1 && (
-                      <img alt="Объяснимый результат" className="h-48 w-full object-contain mix-blend-screen" src="/verified-check.svg?v=4" />
-                    )}
-                    {index === 2 && (
-                      <img alt="Безопасная публикация" className="h-48 w-full object-contain mix-blend-screen" src="/global-network.svg?v=4" />
-                    )}
-                  </div>
-                </GlassCard>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════ STATS SECTION ══════════ */}
-      {stats && (
-        <section className="relative w-full bg-background py-16 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-            <div className="text-center mb-16">
-              <p className="text-xs uppercase tracking-[0.26em] text-foreground/40 font-medium">Статистика в реальном времени</p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
-                Проверено доменов: <AnimatedCounter end={stats.total || stats.size || 0} className="inline-block bg-gradient-to-br from-violet-500 to-blue-500 bg-clip-text text-transparent drop-shadow-sm" />
-              </h2>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <GlassCard delay={0.1} className="p-8 group" glow="radial-gradient(circle at 100% 100%, rgba(74,222,128,0.06), transparent 70%)">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 group-hover:scale-110 transition-transform">
-                  <Shield className="h-6 w-6 text-green-400" strokeWidth={1.5} />
+                  <h3 className="text-2xl font-semibold mb-3">AI-слой и Эвристика</h3>
+                  <p className="text-white/50 leading-relaxed max-w-sm">
+                    Умный алгоритм разбирает структуру URL, анализирует контекст доменной зоны и оценивает риски тайпсквоттинга.
+                  </p>
                 </div>
-                <div className="mt-6 text-xs uppercase tracking-wider text-foreground/50">Безопасные</div>
-                <AnimatedCounter end={stats.verdicts?.low || 0} className="mt-2 text-4xl font-bold text-green-400 transition-colors drop-shadow-[0_0_15px_rgba(74,222,128,0.3)]" duration={1500} />
-                <p className="mt-2 text-sm text-foreground/40">Домены с низким риском</p>
-              </GlassCard>
-
-              <GlassCard delay={0.2} className="p-8 group" glow="radial-gradient(circle at 100% 100%, rgba(250,204,21,0.06), transparent 70%)">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 group-hover:scale-110 transition-transform">
-                  <Search className="h-6 w-6 text-yellow-400" strokeWidth={1.5} />
+                <div className="w-full sm:w-2/5 p-6 relative flex items-center justify-center min-h-[250px]">
+                  <div className="absolute inset-0 bg-gradient-to-l from-violet-500/10 to-transparent" />
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="w-48 h-48 rounded-full border border-violet-500/20 border-dashed absolute" />
+                  <motion.div animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="w-32 h-32 rounded-full border border-violet-400/30 border-dotted absolute" />
+                  <Network className="h-16 w-16 text-violet-300 relative z-10 opacity-80" />
                 </div>
-                <div className="mt-6 text-xs uppercase tracking-wider text-foreground/50">Подозрительные</div>
-                <AnimatedCounter end={stats.verdicts?.medium || 0} className="mt-2 text-4xl font-bold text-yellow-400 transition-colors drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" duration={1500} />
-                <p className="mt-2 text-sm text-foreground/40">Требуют внимания</p>
-              </GlassCard>
+              </div>
+            </GlassCard>
 
-              <GlassCard delay={0.3} className="p-8 group" glow="radial-gradient(circle at 100% 100%, rgba(248,113,113,0.06), transparent 70%)">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="h-6 w-6 text-red-400" strokeWidth={1.5} />
+            {/* Cell 2: Anti-Phishing DBs */}
+            <GlassCard delay={0.2} containerClassName="md:col-span-1 md:row-span-1" className="p-10 flex flex-col justify-between group" glow="radial-gradient(circle at 100% 100%, rgba(34,197,94,0.08), transparent 70%)">
+              <div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white/5 border border-white/10 mb-6 group-hover:scale-110 transition-transform">
+                  <Shield className="h-6 w-6 text-green-400" />
                 </div>
-                <div className="mt-6 text-xs uppercase tracking-wider text-foreground/50">Опасные</div>
-                <AnimatedCounter end={stats.verdicts?.high || 0} className="mt-2 text-4xl font-bold text-red-400 transition-colors drop-shadow-[0_0_15px_rgba(248,113,113,0.3)]" duration={1500} />
-                <p className="mt-2 text-sm text-foreground/40">Высокий риск фишинга</p>
-              </GlassCard>
-
-              <GlassCard delay={0.4} className="p-8 group" glow="radial-gradient(circle at 100% 100%, rgba(167,139,250,0.06), transparent 70%)">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-foreground/5 border border-foreground/10 group-hover:scale-110 transition-transform">
-                  <Database className="h-6 w-6 text-violet-400" strokeWidth={1.5} />
-                </div>
-                <div className="mt-6 text-xs uppercase tracking-wider text-foreground/50">База данных</div>
-                <div className="mt-2 text-4xl font-bold text-violet-400">
-                  {stats.dbSize ? (
-                    <>
-                      <AnimatedCounter end={Math.floor(stats.dbSize / 1024)} className="inline-block" duration={1500} />
-                      <span className="text-xl text-foreground/40 ml-1">KB</span>
-                    </>
-                  ) : '—'}
-                </div>
-                <p className="mt-2 text-sm text-foreground/40">Размер кэша</p>
-              </GlassCard>
-            </div>
-
-            {(stats.oldestRecord || stats.newestRecord) && (
-              <div className="mt-8 text-center">
-                <p className="text-sm text-foreground/40">
-                  {stats.oldestRecord && `Первая проверка: ${new Date(stats.oldestRecord).toLocaleDateString('ru-RU')}`}
-                  {stats.oldestRecord && stats.newestRecord && ' • '}
-                  {stats.newestRecord && `Последняя: ${new Date(stats.newestRecord).toLocaleDateString('ru-RU')}`}
+                <h3 className="text-2xl font-semibold mb-3">Фиды фишинга</h3>
+                <p className="text-white/50 leading-relaxed">
+                  Мгновенная сверка с базами OpenPhish, URLAbuse и другими OSINT-базами.
                 </p>
               </div>
-            )}
-          </div>
-        </section>
-      )}
+              <div className="mt-8 flex items-center gap-3">
+                <span className="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] animate-pulse" />
+                <span className="text-xs uppercase tracking-wider text-green-400/80">Базы обновлены</span>
+              </div>
+            </GlassCard>
 
-      {/* ══════════ CTA SECTION ══════════ */}
-      <section className="relative w-full bg-background py-16 pb-28">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <GlassCard className="flex flex-col items-center justify-center p-14 text-center sm:p-24" glow="radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.05) 0%, transparent 70%)">
-            <h2 className="text-4xl font-semibold tracking-[-0.03em] sm:text-5xl bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">Есть подозрительная ссылка?</h2>
-            <p className="mt-6 max-w-xl text-lg text-foreground/50 font-light">
-              Вставьте её и посмотрите, что найдет анализатор.
-            </p>
-            <Button 
-              className="mt-10 h-14 w-full sm:w-auto shrink-0 rounded-[1.5rem] bg-foreground text-black px-10 text-base font-bold tracking-wide shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 hover:bg-foreground hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-[1.05] active:scale-95"
-              onClick={() => {
-                openAnalyzerWithInput(heroInput);
-              }}
-            >
-              Начать анализ
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </GlassCard>
+            {/* Cell 3: Realtime Database Stats */}
+            <GlassCard delay={0.3} containerClassName="md:col-span-1 md:row-span-1" className="p-10 group" glow="radial-gradient(circle at 0% 100%, rgba(59,130,246,0.08), transparent 70%)">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white/5 border border-white/10 mb-6 group-hover:scale-110 transition-transform">
+                <Cpu className="h-6 w-6 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-3">Быстрый кэш</h3>
+              <p className="text-white/50 leading-relaxed mb-6">
+                Все проверки кэшируются. Повторный скан мгновенен и не тратит токены.
+              </p>
+              <div className="text-4xl font-bold font-mono tracking-tight text-white/90">
+                {stats?.total ? <AnimatedCounter end={stats.total} duration={2000} /> : "..."}
+                <span className="text-lg text-white/30 ml-2 font-sans">доменов</span>
+              </div>
+            </GlassCard>
+
+            {/* Cell 4: Security Veridcts Focus */}
+            <GlassCard delay={0.4} containerClassName="md:col-span-2 md:row-span-1" className="p-10 flex flex-col sm:flex-row justify-between items-center group" glow="radial-gradient(circle at 50% 100%, rgba(250,204,21,0.06), transparent 80%)">
+              <div className="max-w-md w-full mb-8 sm:mb-0">
+                <h3 className="text-2xl font-semibold mb-3">Оценка по 3 уровням риска</h3>
+                <p className="text-white/50 leading-relaxed">
+                  Сервис сразу дает вердикт: Low, Medium или High, чтобы вы четко понимали, переходить по ссылке или закрыть страницу.
+                </p>
+              </div>
+              <div className="flex flex-col gap-4 w-full sm:w-auto">
+                <div className="flex items-center justify-between w-48 bg-white/5 rounded-xl border border-white/10 p-3 px-4">
+                  <span className="text-xs font-semibold uppercase text-green-400">Low Risk</span>
+                  <span className="text-sm text-white/60 font-mono">{stats?.verdicts?.low || 0}</span>
+                </div>
+                <div className="flex items-center justify-between w-48 bg-white/5 rounded-xl border border-white/10 p-3 px-4">
+                  <span className="text-xs font-semibold uppercase text-yellow-400">Medium</span>
+                  <span className="text-sm text-white/60 font-mono">{stats?.verdicts?.medium || 0}</span>
+                </div>
+                <div className="flex items-center justify-between w-48 bg-white/5 rounded-xl border border-white/10 p-3 px-4">
+                  <span className="text-xs font-semibold uppercase text-red-400">High Risk</span>
+                  <span className="text-sm text-white/60 font-mono">{stats?.verdicts?.high || 0}</span>
+                </div>
+              </div>
+            </GlassCard>
+
+          </div>
         </div>
       </section>
-      {/* Tailwind specific animations strictly for this page */}
+
+      {/* ══════════ CTA ══════════ */}
+      <section className="relative w-full py-24 z-10 flex flex-col items-center">
+        <h2 className="text-3xl font-semibold tracking-tight text-white/80">Готовы к безопасной сети?</h2>
+        <Button
+            className="mt-8 h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white px-10 text-base shadow-xl transition-all"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              document.getElementById("domain-input")?.focus();
+            }}
+          >
+            Начать анализ
+            <Search className="ml-2 h-5 w-5" />
+        </Button>
+      </section>
+
+      {/* Tailwind specific animations strictly for this page if needed (usually in global css, but shimmer is generic) */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes shimmer {
           100% { left: 100%; }

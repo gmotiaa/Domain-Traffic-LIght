@@ -11,7 +11,6 @@ import { ArticlesPage } from "@/pages/ArticlesPage";
 import { BrandKitPage } from "@/pages/BrandKitPage";
 import { ChangelogPage } from "@/pages/ChangelogPage";
 import { HomePage } from "@/pages/HomePage";
-import { HomePageAlternate } from "@/pages/HomePageAlternate";
 import { MethodPage } from "@/pages/MethodPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PresentationPage } from "@/pages/PresentationPage";
@@ -36,7 +35,6 @@ const routeTitles: Record<SitePath | "404", string> = {
   "/changelog": "Что нового | Доменный светофор",
   "/articles": "Библиотека безопасности | Доменный светофор",
   "/presentation": "Презентация | Доменный светофор",
-  "/main2": "Новый Лэндинг | Доменный светофор",
   "404": "Красный свет | Тупик",
   "/404": "Красный свет | Тупик",
 };
@@ -59,8 +57,6 @@ function renderPage(path: SitePath | "404") {
       return <ArticlesPage />;
     case "/presentation":
       return <PresentationPage />;
-    case "/main2":
-      return <HomePageAlternate />;
     case "404":
       return <NotFoundPage />;
     case "/":
