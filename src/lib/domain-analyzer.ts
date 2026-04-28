@@ -329,7 +329,13 @@ const compoundSuffixes = [
 ];
 
 const compoundSuffixesSet = new Set(compoundSuffixes);
-const maxSuffixDepth = Math.max(...compoundSuffixes.map((s) => s.split(".").length));
+
+let _maxSuffixDepth = 0;
+for (const s of compoundSuffixes) {
+  const depth = s.split(".").length;
+  if (depth > _maxSuffixDepth) _maxSuffixDepth = depth;
+}
+const maxSuffixDepth = _maxSuffixDepth;
 
 const ignoredDomainTokens = new Set([
   "www",
@@ -419,10 +425,15 @@ function normalizeToken(value: string): string {
 }
 
 function extractMeaningfulTokens(host: string): string[] {
-  return host
-    .split(/[.-]/)
-    .map((part) => normalizeToken(part))
-    .filter((token) => token.length >= 4 && !ignoredDomainTokens.has(token));
+  const parts = host.split(/[.-]/);
+  const result: string[] = [];
+  for (const part of parts) {
+    const token = normalizeToken(part);
+    if (token.length >= 4 && !ignoredDomainTokens.has(token)) {
+      result.push(token);
+    }
+  }
+  return result;
 }
 
 function hasHomoglyphPatterns(host: string): boolean {
@@ -763,6 +774,9 @@ class DomainAnalyzerSession {
   private rawHost: string;
   private canonicalHost: string;
   private breakdown: DomainBreakdown;
+  private longestLabel = 0;
+  private hyphenCount = 0;
+  private digitCount = 0;
 
   private reasons: AnalyzerReason[] = [];
   private score = 0;
@@ -779,6 +793,19 @@ class DomainAnalyzerSession {
     this.rawHost = normalized.rawHost;
     this.canonicalHost = this.host.startsWith("www.") ? this.host.slice(4) : this.host;
     this.breakdown = buildBreakdown(this.host);
+
+    for (let i = 0; i < this.host.length; i++) {
+      const char = this.host[i];
+      if (char === "-") this.hyphenCount++;
+      else if (char >= "0" && char <= "9") this.digitCount++;
+    }
+
+    const labels = this.host.split(".");
+    for (const label of labels) {
+      if (label.length > this.longestLabel) {
+        this.longestLabel = label.length;
+      }
+    }
   }
 
   private pushReason(title: string, detail: string, scoreDelta: number, tone: AnalyzerTone): void {
@@ -1045,15 +1072,14 @@ class DomainAnalyzerSession {
     }
 
     // ── 13. Дефисы
-    const hyphenCount = (this.host.match(/-/g) || []).length;
-    if (hyphenCount >= 3) {
+    if (this.hyphenCount >= 3) {
       this.pushReason(
         "Много дефисов",
-        `${hyphenCount} дефисов в домене. Это часто используется для имитации знакомых названий.`,
+        `${this.hyphenCount} дефисов в домене. Это часто используется для имитации знакомых названий.`,
         12,
         "warning",
       );
-    } else if (hyphenCount >= 2) {
+    } else if (this.hyphenCount >= 2) {
       this.pushReason(
         "Несколько дефисов",
         "Лишние дефисы часто используют, чтобы приблизить домен к знакомому названию.",
@@ -1063,15 +1089,14 @@ class DomainAnalyzerSession {
     }
 
     // ── 14. Цифры
-    const digitCount = (this.host.match(/\d/g) || []).length;
-    if (digitCount >= 6) {
+    if (this.digitCount >= 6) {
       this.pushReason(
         "Очень много цифр",
-        `${digitCount} цифр в домене. Такие адреса выглядят как автоматически сгенерированные.`,
+        `${this.digitCount} цифр в домене. Такие адреса выглядят как автоматически сгенерированные.`,
         12,
         "warning",
       );
-    } else if (digitCount >= 4) {
+    } else if (this.digitCount >= 4) {
       this.pushReason(
         "Много цифр",
         "Большое количество цифр в адресе делает его менее читаемым и требует проверки.",
@@ -1081,15 +1106,14 @@ class DomainAnalyzerSession {
     }
 
     // ── 15. Длинные фрагменты
-    const longestLabel = Math.max(...this.host.split(".").map((s) => s.length));
-    if (longestLabel >= 25) {
+    if (this.longestLabel >= 25) {
       this.pushReason(
         "Очень длинный фрагмент домена",
-        `Фрагмент длиной ${longestLabel} символов. Такие домены почти невозможно быстро проверить.`,
+        `Фрагмент длиной ${this.longestLabel} символов. Такие домены почти невозможно быстро проверить.`,
         12,
         "warning",
       );
-    } else if (longestLabel >= 18) {
+    } else if (this.longestLabel >= 18) {
       this.pushReason(
         "Слишком длинный фрагмент",
         "Один из фрагментов домена слишком длинный. Его труднее быстро проверить глазами.",
@@ -1209,9 +1233,6 @@ class DomainAnalyzerSession {
 
   // 21, 22
   private checkReadability(): void {
-    const hyphenCount = (this.host.match(/-/g) || []).length;
-    const digitCount = (this.host.match(/\d/g) || []).length;
-    const longestLabel = Math.max(...this.host.split(".").map((s) => s.length));
     const domainEntropy = entropyOf(this.host.replace(/\./g, ""));
     const normalizedHost = normalizeToken(this.host);
     const mimicsOfficial = officialTokens.some(
@@ -1220,9 +1241,9 @@ class DomainAnalyzerSession {
 
     const looksReadable =
       (!this.breakdown.subdomain || this.breakdown.subdomain === "www") &&
-      hyphenCount < 2 &&
-      digitCount < 4 &&
-      longestLabel < 18 &&
+      this.hyphenCount < 2 &&
+      this.digitCount < 4 &&
+      this.longestLabel < 18 &&
       this.host.length <= 40 &&
       !this.host.includes("xn--") &&
       !hasMixedScripts(this.rawHost) &&
