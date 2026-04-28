@@ -162,7 +162,7 @@ export function HomePageAlternate() {
                 }}
               >
                 {/* Embedded animated glare */}
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-white/5 to-transparent w-[200%] animate-[shimmer_5s_infinite] -left-[100%]" />
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-white/5 to-transparent w-[200%] animate-shimmer -left-[100%]" />
                 
                 <div className="flex flex-1 items-center gap-4 px-5 relative z-10 w-full h-16">
                   <Globe className="h-6 w-6 text-white/30" />
@@ -291,13 +291,6 @@ export function HomePageAlternate() {
             <Search className="ml-2 h-5 w-5" />
         </Button>
       </section>
-      
-      {/* Tailwind specific animations strictly for this page if needed (usually in global css, but shimmer is generic) */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes shimmer {
-          100% { left: 100%; }
-        }
-      `}} />
     </div>
   );
 }
