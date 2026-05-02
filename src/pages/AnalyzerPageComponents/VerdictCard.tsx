@@ -68,11 +68,18 @@ export function VerdictCard({
 
       {/* Progress bar */}
       <div className="mt-8">
-        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/30">
+        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/30" aria-hidden="true">
           <span>Безопасно</span>
           <span>Опасно</span>
         </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5">
+        <div
+          className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5"
+          role="progressbar"
+          aria-valuenow={result.score}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Уровень угрозы"
+        >
           <motion.div
             className={`h-full rounded-full ${cfg.progressClass}`}
             initial={{ width: 0 }}
