@@ -6,6 +6,7 @@ import { ArrowRight, Search, Zap, Shield, Globe, Cpu, Database, TrendingUp } fro
 import { Button } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { writeAnalyzerPrefill } from "@/lib/analyzer-prefill";
+import { getApiUrl } from "@/lib/api";
 import {
   behaviorSteps,
   heroVideo,
@@ -109,7 +110,7 @@ export function HomePage() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const response = await fetch("/api/cache-stats");
+        const response = await fetch(getApiUrl("/api/cache-stats"));
         const data = await response.json().catch(() => ({}));
         if (response.ok) {
           setStats(data);

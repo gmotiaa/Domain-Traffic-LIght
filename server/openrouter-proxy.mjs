@@ -216,6 +216,31 @@ function getCacheHostKeyForPrefix(prefix, host) {
   return `${prefix}:host:${String(host || "unknown").toLowerCase()}`;
 }
 
+async function getRedisRecordByKeyReference(reference, prefix = cachePrefix) {
+  if (!reference) return null;
+  if (reference?.data) return reference;
+
+  const recordKey =
+    typeof reference === "string"
+      ? getCacheRecordKeyForPrefix(prefix, reference)
+      : reference?.key
+        ? getCacheRecordKeyForPrefix(prefix, reference.key)
+        : "";
+
+  if (!recordKey || !redisCache) return null;
+  return redisCache.get(recordKey);
+}
+
+function getRecordVerdict(record) {
+  return (
+    record?.verdict ||
+    record?.data?.aiAdjustedResult?.verdict ||
+    record?.data?.enrichedLocalResult?.verdict ||
+    record?.data?.analysis?.verdict ||
+    "low"
+  );
+}
+
 function buildCacheRecord(key, data, existingRecord = null) {
   const host =
     data?.aiAdjustedResult?.host ||
@@ -354,7 +379,8 @@ async function setCachedResponse(key, data, telemetryConsent = false) {
   let existingRecord = null;
   try {
     if (redisCache) {
-      existingRecord = await retryWrite(() => redisCache.get(getCacheHostKey(host)));
+      const existingReference = await retryWrite(() => redisCache.get(getCacheHostKey(host)));
+      existingRecord = await retryWrite(() => getRedisRecordByKeyReference(existingReference));
     } else {
       for (const [existingKey, record] of responseCache.entries()) {
         if (record?.host === host) {
@@ -375,6 +401,11 @@ async function setCachedResponse(key, data, telemetryConsent = false) {
     try {
       await retryWrite(async () => {
         const ttlSeconds = 7 * 24 * 60 * 60; // 7 дней
+        const previousRecordKey = existingRecord?.key || null;
+        const previousVerdict = getRecordVerdict(existingRecord);
+        const nextVerdict = getRecordVerdict(record);
+        const isNewHost = !existingRecord;
+        const isReplacingRecord = Boolean(previousRecordKey && previousRecordKey !== key);
         
         // Используем оптимизированную структуру:
         // 1. Полная запись по key с TTL
@@ -392,12 +423,29 @@ async function setCachedResponse(key, data, telemetryConsent = false) {
           writes.push(redisCache.set(getCacheHostKey(record.host), key, { ex: ttlSeconds }));
         }
 
-        // Update stats hash atomically
-        const verdict = record.verdict || data?.aiAdjustedResult?.verdict || data?.analysis?.verdict || 'low';
+        if (isReplacingRecord) {
+          writes.push(
+            redisCache.del(getCacheRecordKey(previousRecordKey)),
+            redisCache.srem(cacheIndexKey, getCacheRecordKey(previousRecordKey)),
+          );
+        }
+
+        if (isNewHost) {
+          writes.push(
+            redisCache.hincrby(cacheStatsKey, "total", 1),
+            redisCache.hincrby(cacheStatsKey, `verdict:${nextVerdict}`, 1),
+          );
+        } else if (previousVerdict !== nextVerdict) {
+          writes.push(
+            redisCache.hincrby(cacheStatsKey, `verdict:${previousVerdict}`, -1),
+            redisCache.hincrby(cacheStatsKey, `verdict:${nextVerdict}`, 1),
+          );
+        }
+
         writes.push(
-          redisCache.hincrby(cacheStatsKey, 'total', 1),
-          redisCache.hincrby(cacheStatsKey, `verdict:${verdict}`, 1),
-          redisCache.hset(cacheStatsKey, { newestRecord: String(record.updatedAt || Date.now()) }),
+          redisCache.hset(cacheStatsKey, {
+            newestRecord: String(record.updatedAt || Date.now()),
+          }),
         );
 
         await Promise.all(writes);
@@ -551,30 +599,28 @@ async function getRawCacheRecordByHost(hostInput) {
   // Попытка загрузки из Redis
   if (redisCache) {
     try {
-      // Теперь host -> key (ссылка), а не host -> record (полная запись)
-      const recordKey = await retryOperation(async () => {
-        let key = await redisCache.get(getCacheHostKey(normalized.host));
-        if (!key) {
-          // Проверяем legacy префиксы
-          for (const prefix of legacyCachePrefixes) {
-            key = await redisCache.get(getCacheHostKeyForPrefix(prefix, normalized.host));
-            if (key) {
-              console.log(`[Cache] Found host in legacy prefix: ${prefix}`);
-              break;
-            }
-          }
-        }
-        return key;
-      });
-      
-      if (recordKey) {
-        // Получаем полную запись по ключу
-        const record = await retryOperation(() => 
-          redisCache.get(typeof recordKey === 'string' ? getCacheRecordKey(recordKey) : getCacheHostKey(normalized.host))
+      const currentReference = await retryOperation(() =>
+        redisCache.get(getCacheHostKey(normalized.host)),
+      );
+      const currentRecord = await retryOperation(() =>
+        getRedisRecordByKeyReference(currentReference, cachePrefix),
+      );
+
+      if (currentRecord?.data) {
+        console.log(`[Cache] Redis hit for host: ${normalized.host}`);
+        return currentRecord;
+      }
+
+      for (const prefix of legacyCachePrefixes) {
+        const legacyReference = await retryOperation(() =>
+          redisCache.get(getCacheHostKeyForPrefix(prefix, normalized.host)),
         );
-        
+        const record = await retryOperation(() =>
+          getRedisRecordByKeyReference(legacyReference, prefix),
+        );
+
         if (record?.data) {
-          console.log(`[Cache] Redis hit for host: ${normalized.host}`);
+          console.log(`[Cache] Found host in legacy prefix: ${prefix}`);
           return record;
         }
       }
@@ -2873,12 +2919,17 @@ export async function cacheStatsResponse() {
         dbSize = size * 1850;
       }
 
-      // Check if stats hash has verdict data
-      const hasVerdictData = Object.keys(stats).some(k => k.startsWith('verdict:'));
+      // Check if stats hash has verdict data and still matches the current index.
+      const verdictValues = Object.entries(stats)
+        .filter(([k]) => k.startsWith('verdict:'))
+        .map(([, v]) => Number(v) || 0);
+      const hasVerdictData = verdictValues.length > 0;
+      const hasNegativeVerdict = verdictValues.some((value) => value < 0);
+      const statsTotal = Number(stats.total);
+      const statsDrifted = !Number.isFinite(statsTotal) || statsTotal !== size;
 
-      if (!hasVerdictData && size > 0) {
-        // Lazy migration: stats hash is empty but we have records — rebuild once
-        console.log(`[Cache] Stats hash empty, rebuilding from ${size} records...`);
+      if (size > 0 && (!hasVerdictData || hasNegativeVerdict || statsDrifted)) {
+        console.log(`[Cache] Stats hash drifted, rebuilding from ${size} records...`);
         return await rebuildStatsFromScan();
       }
 
