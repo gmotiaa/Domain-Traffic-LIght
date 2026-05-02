@@ -45,6 +45,8 @@ function createMockSseResponse() {
   const chunks = [];
   return {
     chunks,
+    once: vi.fn(),
+    off: vi.fn(),
     writeHead: vi.fn(),
     write: vi.fn((chunk) => {
       chunks.push(String(chunk));
