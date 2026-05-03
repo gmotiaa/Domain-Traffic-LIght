@@ -72,7 +72,14 @@ export function VerdictCard({
           <span>Безопасно</span>
           <span>Опасно</span>
         </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5">
+        <div
+          className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5"
+          role="progressbar"
+          aria-valuenow={result.score}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Уровень риска домена"
+        >
           <motion.div
             className={`h-full rounded-full ${cfg.progressClass}`}
             initial={{ width: 0 }}
