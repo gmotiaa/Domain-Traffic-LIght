@@ -14,3 +14,6 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+## 2026-05-05 - Added keyboard focus indicators to presentation navigation
+**Learning:** Icon-only navigation controls (like Chevron buttons and slide dots) lack native, clear focus states in this design system, making keyboard navigation difficult for screen reader and keyboard-only users.
+**Action:** Applied 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50' to all pagination/navigation controls within PresentationPage to ensure accessibility guidelines are met without impacting pointer users.
