@@ -14,7 +14,7 @@ export function ReferenceSections({
     <>
       <GlassCard className="lg:col-span-6 p-6">
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-foreground/70">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-foreground/70 outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-lg">
             <span>Что учитывает модель</span>
             <ChevronDown className="h-4 w-4 text-foreground/30 transition-transform group-open:rotate-180" />
           </summary>
@@ -31,7 +31,7 @@ export function ReferenceSections({
 
       <GlassCard className="lg:col-span-6 p-6">
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-foreground/70">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-foreground/70 outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-lg">
             <span>Справочные домены</span>
             <ChevronDown className="h-4 w-4 text-foreground/30 transition-transform group-open:rotate-180" />
           </summary>
