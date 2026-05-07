@@ -88,7 +88,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
             <button
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:bg-white/10 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 lg:hidden"
               onClick={() => setIsMenuOpen((value) => !value)}
               type="button"
             >
