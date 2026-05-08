@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2025-05-08 - Added Progress Bar ARIA Roles
+**Learning:** Custom visual progress bars built with `framer-motion` need explicit ARIA properties to ensure screen-reader compatibility since they are implemented as `div` elements instead of semantic native elements like `<progress>`.
+**Action:** Always add `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and a localized `aria-label` to custom progress bar containers, and `aria-hidden="true"` to any purely decorative label texts.
