@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2026-05-09 - Focus States on Custom Accordions
+**Learning:** Customizing `<details>` and `<summary>` elements often involves removing the default focus outline (using `outline-none`), which breaks keyboard accessibility. We must explicitly re-add focus indicators when we do this.
+**Action:** When styling `<summary>` tags for accordions, always include `focus-visible:outline-none focus-visible:ring-2` (and a ring color) to ensure clear visual feedback for keyboard users.
