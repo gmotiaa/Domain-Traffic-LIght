@@ -25,7 +25,7 @@ export function VerdictCard({
     <GlassCard className="lg:col-span-7 p-8" glow={cfg.bgGlow}>
       <div className="flex flex-wrap items-center gap-2">
         <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.15em] ${cfg.pillBg}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${cfg.dotClass}`} />
+          <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${cfg.dotClass}`} />
           Вердикт
         </span>
         <span className="rounded-full border border-foreground/8 bg-foreground/5 px-3 py-1 text-[11px] text-foreground/50">
@@ -67,12 +67,19 @@ export function VerdictCard({
       )}
 
       {/* Progress bar */}
-      <div className="mt-8">
-        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/30">
+      <div
+        className="mt-8"
+        role="progressbar"
+        aria-valuenow={result.score}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Оценка опасности домена"
+      >
+        <div aria-hidden="true" className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/30">
           <span>Безопасно</span>
           <span>Опасно</span>
         </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5">
+        <div aria-hidden="true" className="mt-2 h-2 overflow-hidden rounded-full bg-foreground/5">
           <motion.div
             className={`h-full rounded-full ${cfg.progressClass}`}
             initial={{ width: 0 }}
