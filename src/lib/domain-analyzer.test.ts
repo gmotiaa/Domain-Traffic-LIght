@@ -10,6 +10,11 @@ describe('domain-analyzer', () => {
       ['255.255.255.255', true],
       ['10.0.0.1', true],
       ['172.16.0.0', true],
+      // Leading zeros (valid in current implementation)
+      ['01.02.03.04', true],
+      ['010.8.8.8', true],
+      // IPv6 (invalid for this function)
+      ['2001:0db8:85a3:0000:0000:8a2e:0370:7334', false],
       // Invalid ranges
       ['999.999.999.999', false],
       ['256.256.256.256', false],
