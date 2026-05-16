@@ -240,7 +240,7 @@ function FaqSection() {
         {faqItems.map((item, index) => (
           <GlassCard key={item.title} delay={index * 0.1} containerClassName="w-full" className="p-6 w-full">
             <details className="group marker:content-['']">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-medium text-foreground/90 outline-none">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-medium text-foreground/90 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 rounded-lg">
                 <span>{item.title}</span>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/[0.05] group-open:bg-foreground/10 transition-colors">
                   <ChevronDown className="h-4 w-4 text-foreground/50 transition-transform group-open:rotate-180" />
