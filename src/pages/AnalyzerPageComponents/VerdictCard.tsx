@@ -67,7 +67,14 @@ export function VerdictCard({
       )}
 
       {/* Progress bar */}
-      <div className="mt-8">
+      <div
+        className="mt-8"
+        role="progressbar"
+        aria-valuenow={result.score}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Уровень опасности"
+      >
         <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/30">
           <span>Безопасно</span>
           <span>Опасно</span>
