@@ -155,7 +155,7 @@ function OfficialRoutesSection() {
         {officialRoutes.map((route, index) => (
           <GlassCard key={route.title} delay={index * 0.1} containerClassName="flex w-full" className="p-5 sm:p-6 transition-colors hover:bg-foreground/[0.04] group w-full">
             <a
-              className="flex items-start justify-between gap-4 outline-none"
+              className="flex items-start justify-between gap-4 outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-lg"
               href={route.href}
               rel="noreferrer"
               target="_blank"
@@ -240,7 +240,7 @@ function FaqSection() {
         {faqItems.map((item, index) => (
           <GlassCard key={item.title} delay={index * 0.1} containerClassName="w-full" className="p-6 w-full">
             <details className="group marker:content-['']">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-medium text-foreground/90 outline-none">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-medium text-foreground/90 outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-lg">
                 <span>{item.title}</span>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/[0.05] group-open:bg-foreground/10 transition-colors">
                   <ChevronDown className="h-4 w-4 text-foreground/50 transition-transform group-open:rotate-180" />
