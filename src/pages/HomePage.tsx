@@ -252,7 +252,7 @@ export function HomePage() {
                   }}
                 >
                   {/* Embedded animated glare */}
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-foreground/5 to-transparent w-[200%] animate-[shimmer_5s_infinite] -left-[100%]" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-foreground/5 to-transparent w-[200%] animate-shimmer -left-[100%]" />
                   
                   <div className="flex flex-1 items-center gap-4 px-5 relative z-10 w-full h-16">
                     <Globe className="h-6 w-6 text-foreground/30" />
@@ -582,12 +582,6 @@ export function HomePage() {
           </GlassCard>
         </div>
       </section>
-      {/* Tailwind specific animations strictly for this page */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes shimmer {
-          100% { left: 100%; }
-        }
-      `}} />
     </div>
   );
 }

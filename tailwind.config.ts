@@ -71,6 +71,9 @@ const config: Config = {
         body: ["var(--font-body)"],
       },
       keyframes: {
+        shimmer: {
+          "100%": { left: "100%" },
+        },
         "fade-rise": {
           from: {
             opacity: "0",
@@ -83,6 +86,7 @@ const config: Config = {
         },
       },
       animation: {
+        shimmer: "shimmer 5s infinite",
         "fade-rise": "fade-rise 0.8s ease-out both",
         "fade-rise-delay": "fade-rise 0.8s ease-out 0.2s both",
         "fade-rise-delay-2": "fade-rise 0.8s ease-out 0.4s both",
