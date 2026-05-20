@@ -482,13 +482,13 @@ export function AdminPage() {
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-2xl sm:p-6">
           <div className="flex gap-4 border-b border-white/10 mb-6 pb-2">
             <button
-              className={`px-4 py-2 font-medium transition-colors ${activeTab === "cache" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
+              className={`px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${activeTab === "cache" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
               onClick={() => setActiveTab("cache")}
             >
               Управление кэшем
             </button>
             <button
-              className={`px-4 py-2 font-medium transition-colors ${activeTab === "content" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
+              className={`px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${activeTab === "content" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
               onClick={() => setActiveTab("content")}
             >
               Управление контентом
@@ -723,7 +723,7 @@ export function AdminPage() {
               <div className="mb-3 flex gap-2">
                 <button
                   onClick={() => setSortOrder("date")}
-                  className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     sortOrder === "date"
                       ? "bg-white/10 text-white"
                       : "bg-white/[0.02] text-white/50 hover:bg-white/[0.05]"
@@ -733,7 +733,7 @@ export function AdminPage() {
                 </button>
                 <button
                   onClick={() => setSortOrder("score")}
-                  className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     sortOrder === "score"
                       ? "bg-white/10 text-white"
                       : "bg-white/[0.02] text-white/50 hover:bg-white/[0.05]"
@@ -747,7 +747,7 @@ export function AdminPage() {
               <div className="mb-4 flex gap-2">
                 <button
                   onClick={() => setVerdictFilter("all")}
-                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     verdictFilter === "all"
                       ? "bg-white/10 text-white"
                       : "bg-white/[0.02] text-white/50 hover:bg-white/[0.05]"
@@ -757,7 +757,7 @@ export function AdminPage() {
                 </button>
                 <button
                   onClick={() => setVerdictFilter("low")}
-                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     verdictFilter === "low"
                       ? "bg-green-500/20 text-green-400"
                       : "bg-white/[0.02] text-white/50 hover:bg-green-500/10"
@@ -767,7 +767,7 @@ export function AdminPage() {
                 </button>
                 <button
                   onClick={() => setVerdictFilter("medium")}
-                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     verdictFilter === "medium"
                       ? "bg-yellow-500/20 text-yellow-400"
                       : "bg-white/[0.02] text-white/50 hover:bg-yellow-500/10"
@@ -777,7 +777,7 @@ export function AdminPage() {
                 </button>
                 <button
                   onClick={() => setVerdictFilter("high")}
-                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
                     verdictFilter === "high"
                       ? "bg-red-500/20 text-red-400"
                       : "bg-white/[0.02] text-white/50 hover:bg-red-500/10"
@@ -801,7 +801,7 @@ export function AdminPage() {
                         setSearchHost(item.host || "");
                         void loadEntry(item.host || "");
                       }}
-                      className="w-full rounded-xl border border-white/8 bg-black/15 px-4 py-3 text-left transition-colors hover:bg-white/[0.04]"
+                      className="w-full rounded-xl border border-white/8 bg-black/15 px-4 py-3 text-left transition-colors hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="truncate text-sm font-medium text-white">{item.host || "—"}</span>
@@ -943,7 +943,7 @@ export function AdminPage() {
                                   onClick={() => handleDeleteReport(report.id)}
                                   aria-label="Удалить жалобу"
                                   disabled={isSaving}
-                                  className="shrink-0 rounded-lg border border-red-500/20 bg-red-500/10 px-2 py-1 text-xs text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                                  className="shrink-0 rounded-lg border border-red-500/20 bg-red-500/10 px-2 py-1 text-xs text-red-400 transition-colors hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 disabled:opacity-50"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                 </button>
@@ -1122,7 +1122,7 @@ export function AdminPage() {
             <button
               onClick={() => setShowReportsModal(false)}
               aria-label="Закрыть"
-              className="absolute right-4 top-4 rounded-lg p-2 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
+              className="absolute right-4 top-4 rounded-lg p-2 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             >
               <X className="h-4 w-4" />
             </button>
