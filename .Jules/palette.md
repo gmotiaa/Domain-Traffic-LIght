@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2024-05-25 - Missing Keyboard Focus States on Interactive Elements
+**Learning:** Found that multiple interactive elements, especially icon-only buttons (like menu toggles, modal close buttons, slide controls, and action buttons), lacked clear visible focus states, hampering keyboard navigation.
+**Action:** Implemented explicit focus states on these interactive `<button>` elements using Tailwind's `focus-visible` pseudo-class (e.g., `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color]`). Next time, always ensure any new interactive element has a clear and explicit keyboard focus state styling.
