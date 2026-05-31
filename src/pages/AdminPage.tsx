@@ -482,13 +482,13 @@ export function AdminPage() {
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-2xl sm:p-6">
           <div className="flex gap-4 border-b border-white/10 mb-6 pb-2">
             <button
-              className={`px-4 py-2 font-medium transition-colors ${activeTab === "cache" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
+              className={`px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${activeTab === "cache" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
               onClick={() => setActiveTab("cache")}
             >
               Управление кэшем
             </button>
             <button
-              className={`px-4 py-2 font-medium transition-colors ${activeTab === "content" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
+              className={`px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${activeTab === "content" ? "border-b-2 border-white text-white" : "text-white/50 hover:text-white"}`}
               onClick={() => setActiveTab("content")}
             >
               Управление контентом
