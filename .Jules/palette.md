@@ -14,3 +14,6 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+## 2024-06-03 - Applied aria-haspopup to Admin reports modal button
+**Learning:** Discovered another instance where a button opening a modal via React state (`setShowReportsModal` in `AdminPage.tsx`) was missing the `aria-haspopup` attribute.
+**Action:** Added `aria-haspopup="dialog"` to the "Жалобы" button in `AdminPage.tsx`. Continually verify that all interactive elements opening dialogs include this attribute for screen reader clarity.

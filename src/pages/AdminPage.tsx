@@ -557,6 +557,7 @@ export function AdminPage() {
                       type="button" 
                       variant="secondary" 
                       onClick={() => setShowReportsModal(true)}
+                      aria-haspopup="dialog"
                       className="relative"
                     >
                       <Flag className="mr-2 h-4 w-4" />
