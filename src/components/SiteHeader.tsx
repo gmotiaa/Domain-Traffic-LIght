@@ -13,7 +13,7 @@ type SiteHeaderProps = {
 
 function navLinkClass(active: boolean) {
   return [
-    "relative px-4 py-2 rounded-[1rem] whitespace-nowrap text-sm font-medium transition-colors",
+    "relative px-4 py-2 rounded-[1rem] whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
     active 
       ? "text-white bg-white/5" 
       : "text-white/50 hover:text-white hover:bg-white/[0.03]",
@@ -38,7 +38,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
         >
           <div className="flex items-center justify-between gap-4">
             <a
-              className="flex min-w-0 items-center gap-3 text-foreground"
+              className="flex min-w-0 items-center gap-3 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-[1.2rem]"
               href={routeHref("/")}
               onClick={() => setIsMenuOpen(false)}
             >
@@ -79,7 +79,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
 
             <div className="hidden lg:flex lg:items-center lg:gap-2">
               <Button asChild className="h-10 rounded-xl bg-white text-black px-5 text-sm font-bold tracking-tight transition-all duration-300 hover:bg-white hover:scale-[1.02] active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:shadow-[0_0_25px_rgba(255,255,255,0.3)]">
-                <a href={routeHref("/analyzer")}>
+                <a href={routeHref("/analyzer")} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-xl outline-none">
                   Открыть Анализатор
                 </a>
               </Button>
@@ -88,7 +88,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
             <button
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:bg-white/10 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:bg-white/10 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
               onClick={() => setIsMenuOpen((value) => !value)}
               type="button"
             >
@@ -105,7 +105,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
                     <a
                       key={item.path}
                       className={[
-                        "rounded-[1rem] border px-4 py-3 text-sm transition-colors",
+                        "rounded-[1rem] border px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
                         active
                           ? "border-white/18 bg-white/10 text-foreground"
                           : "border-white/8 bg-transparent text-muted-foreground hover:text-foreground",
@@ -120,7 +120,7 @@ export function SiteHeader({ activePath }: SiteHeaderProps) {
               </nav>
               <div className="mt-3">
                 <Button asChild className="w-full rounded-xl bg-white text-black font-bold shadow-[0_0_15px_rgba(255,255,255,0.15)]">
-                  <a href={routeHref("/analyzer")} onClick={() => setIsMenuOpen(false)}>
+                  <a href={routeHref("/analyzer")} onClick={() => setIsMenuOpen(false)} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded-xl outline-none">
                     Открыть Анализатор
                   </a>
                 </Button>
