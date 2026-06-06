@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2024-05-25 - Explicit keyboard focus for navigation elements
+**Learning:** Found that primary navigation elements (logo, header links, footer links, and mobile menu toggles) lacked explicit keyboard focus states, making it difficult for keyboard users to track their position on the page.
+**Action:** Added explicit `focus-visible:outline-none focus-visible:ring-2` utility classes to all interactive navigation elements (`<a>` and `<button>`) in the header and footer to ensure clear visual feedback during keyboard navigation. Next time, always ensure all interactive elements have visible focus states.
