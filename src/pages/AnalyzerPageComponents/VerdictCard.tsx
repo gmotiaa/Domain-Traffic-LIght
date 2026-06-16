@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GlassCard } from "./GlassCard";
-import { ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles, Copy, Check } from "lucide-react";
 import type { AnalysisResult, AiExplanation } from "@/lib/domain-analyzer";
 
 interface VerdictCardProps {
@@ -11,6 +12,44 @@ interface VerdictCardProps {
   aiShiftLabel: string | boolean;
   isModerated: boolean;
 // Or import it if it's exported
+}
+
+
+function CopyPill({ label, value }: { label: string; value: string }) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [copied]);
+
+  if (value === "—") {
+    return (
+      <span className="rounded-full border border-foreground/10 bg-foreground/[0.04] px-4 py-2 text-xs text-foreground/60 shadow-sm backdrop-blur-md">
+        {label}: <span className="text-foreground/90 font-medium tracking-wide">{value}</span>
+      </span>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(value);
+        setCopied(true);
+      }}
+      aria-label={`Копировать ${label}: ${value}`}
+      className="group flex items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.04] px-4 py-2 text-xs text-foreground/60 shadow-sm backdrop-blur-md transition-all hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50"
+    >
+      <span>{label}: <span className="text-foreground/90 font-medium tracking-wide">{value}</span></span>
+      {copied ? (
+        <Check className="h-3 w-3 text-green-500" />
+      ) : (
+        <Copy className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" />
+      )}
+    </button>
+  );
 }
 
 export function VerdictCard({
@@ -91,9 +130,7 @@ export function VerdictCard({
             { label: "Зона", value: result.breakdown.tld },
             { label: "Поддомен", value: result.breakdown.subdomain || "—" },
           ].map((item) => (
-            <span key={item.label} className="rounded-full border border-foreground/10 bg-foreground/[0.04] px-4 py-2 text-xs text-foreground/60 shadow-sm backdrop-blur-md">
-              {item.label}: <span className="text-foreground/90 font-medium tracking-wide">{item.value}</span>
-            </span>
+            <CopyPill key={item.label} label={item.label} value={item.value} />
           ))}
         </div>
 
