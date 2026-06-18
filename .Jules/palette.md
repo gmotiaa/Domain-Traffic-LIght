@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2024-06-12 - Accessible progress bar in VerdictCard
+**Learning:** Visual progress bars representing scores (like in VerdictCard) lacked ARIA properties, which hides critical security evaluation data from screen reader users.
+**Action:** Added `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and localized `aria-label` to custom progress bars to ensure screen reader compatibility.
