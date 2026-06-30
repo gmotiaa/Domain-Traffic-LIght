@@ -82,11 +82,14 @@ export function ReportModal({ isOpen, onClose, host, verdict, score }: ReportMod
             exit={{ scale: 0.95, opacity: 0 }}
             className="relative w-full max-w-lg rounded-3xl border border-foreground/10 bg-[#0a0a0a] p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="report-modal-title"
           >
             <button
               onClick={onClose}
               aria-label="Закрыть"
-              className="absolute right-4 top-4 rounded-lg p-2 text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/80"
+              className="absolute right-4 top-4 rounded-lg p-2 text-foreground/40 transition-colors hover:bg-foreground/5 hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50"
             >
               <X className="h-4 w-4" />
             </button>
@@ -96,7 +99,7 @@ export function ReportModal({ isOpen, onClose, host, verdict, score }: ReportMod
                 <Flag className="h-5 w-5 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Пожаловаться на результат</h3>
+                <h3 id="report-modal-title" className="text-lg font-semibold text-foreground">Пожаловаться на результат</h3>
                 <p className="text-sm text-foreground/50">Домен: {host}</p>
               </div>
             </div>
@@ -116,7 +119,7 @@ export function ReportModal({ isOpen, onClose, host, verdict, score }: ReportMod
             </div>
 
             {reportStatus && (
-              <div className={`mt-4 rounded-xl border px-4 py-3 text-sm ${
+              <div aria-live="polite" className={`mt-4 rounded-xl border px-4 py-3 text-sm ${
                 reportStatus.includes("отправлена")
                   ? "border-green-500/20 bg-green-500/10 text-green-400"
                   : "border-amber-500/20 bg-amber-500/10 text-amber-400"
