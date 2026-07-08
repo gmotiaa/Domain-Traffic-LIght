@@ -14,3 +14,7 @@
 ## 2024-05-25 - Interactive Color-Coded Feedback Accessibility
 **Learning:** Found that interactive components using color to convey meaning (like green/red quiz answers or history verdict dots) leave screen reader users without context. Dynamic state changes (like showing an explanation after a quiz selection) also need to be explicitly announced.
 **Action:** Add `sr-only` text descriptions alongside decorative color indicators (and hide the decorative element with `aria-hidden="true"` if necessary). Use `aria-live="polite"` on containers that dynamically appear with feedback to ensure the screen reader announces the result (e.g., "Верно." or "Неверно.").
+
+## 2024-07-08 - ReportModal Accessibility Enhancements
+**Learning:** Custom modals like ReportModal require explicit ARIA attributes (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`) and focus-visible classes on close buttons. Dynamic status updates (e.g. feedback messages) need to be inside an `aria-live="polite"` container to be announced correctly.
+**Action:** When implementing custom modals or interactive states, always ensure these accessibility properties and keyboard focus outlines are present.
